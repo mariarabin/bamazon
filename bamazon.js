@@ -15,8 +15,18 @@ var connection = mysql.createConnection({
     database: "bamazon"
 });
 
-connection.connect(function (err) {
+connection.connect(function (err, res) {
     if (err) throw err;
-    console.log("----------Connected as ID: " + connection.threadId + "----------\n");
-    //createProduct();
+    console.log("---------------Connected as ID: " + connection.threadId + "---------------\n");
+    displayProducts();
+    connection.end();
 });
+
+
+function displayProducts() {
+    console.log("----------All Available Items for SALE----------\n");
+    connection.query("SELECT * FROM products", function (err, res) {
+        if (err) throw err;
+        res.forEach(row => console.log(`${row.product_name}: ${row.department_name}: ${row.price}: ${row.stock_quantity}`));
+    });
+};
