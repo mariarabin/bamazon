@@ -1,4 +1,4 @@
-# bamazon using Node.js & MySQL
+# bamazon Project using Node.js & MySQL
 
 ## Overview
 
