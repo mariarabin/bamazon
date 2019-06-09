@@ -46,6 +46,7 @@ function start() {
                 buyItem();
             }
             else if (answer.buyOrnot === "Exit") {
+                console.log("\n\n\n-------------------Exiting-------------------\n\n\n")
                 connection.end();
             }
         });
@@ -84,26 +85,25 @@ function buyItem() {
             `;
             connection.query(query, { item_id: answer.id }, function (err, res) {
                 if (err) throw err;
-                res.forEach(row => console.log(`Your order is ${row.product_name} for ${answer.qty} quantity/ies`));
+                res.forEach(row => console.log(`\n\nYour order is ${row.product_name} for ${answer.qty} quantity/ies\n`));
                 if (res[0].stock_quantity > answer.qty) {
-                    console.log("Order successful!)");
-                    //updateSupplies1();
+                    var itemQuantity = res[0].stock_quantity - answer.qty;
+                    connection.query("UPDATE products SET ? WHERE ?", [
+                        {
+                            stock_quantity: itemQuantity
+                        }, {
+                            item_id: answer.id
+                        }],
+                        function (err, res) {
+                        });
+                    var cost = res[0].price * answer.qty;
+                    console.log('\nOrder is successful! Total cost is $' + cost.toFixed(2) + '\n\n\n--------------------Thank you!--------------------\n\n\n');
+                    start();
                 } else {
-                    console.log("Insufficient Supply!)");
+                    console.log("Sorry. Insufficient Supply! Pls. try again with a lower quantity order or a different product.)");
+                    connection.end();
                 };
-                //checkSupplies();
             });
         });
 
 };
-
-
-function checkSupplies() {
-    if (row.stock_quantity >= answer.id) {
-        console.log("Order successful!)");
-        //updateSupplies1();
-    } else {
-        console.log("Insufficient Supply!)");
-    };
-
-}
