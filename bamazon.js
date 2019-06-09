@@ -79,11 +79,31 @@ function buyItem() {
             }
         ])
         .then(function (answer) {
-            var query = "SELECT * FROM products";
-            connection.query(query, function (err, res) {
-                console.log("----------Checking supplies...----------");
-                checkSupplies();
+            var query = `SELECT product_name, department_name, price, stock_quantity FROM products
+        where ?
+            `;
+            connection.query(query, { item_id: answer.id }, function (err, res) {
+                if (err) throw err;
+                res.forEach(row => console.log(`Your order is ${row.product_name} for ${answer.qty} quantity/ies`));
+                if (res[0].stock_quantity > answer.qty) {
+                    console.log("Order successful!)");
+                    //updateSupplies1();
+                } else {
+                    console.log("Insufficient Supply!)");
+                };
+                //checkSupplies();
             });
         });
 
 };
+
+
+function checkSupplies() {
+    if (row.stock_quantity >= answer.id) {
+        console.log("Order successful!)");
+        //updateSupplies1();
+    } else {
+        console.log("Insufficient Supply!)");
+    };
+
+}
