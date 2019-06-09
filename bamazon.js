@@ -5,7 +5,7 @@ var connection = mysql.createConnection({
     host: "localhost",
 
     // Your port; if not 3306
-    port: 8889,
+    port: 8890,
 
     // Your username
     user: "root",
@@ -54,15 +54,36 @@ function start() {
 
 function buyItem() {
     inquirer
-        .prompt({
-            name: "qty",
-            type: "input",
-            message: "How many items do you want to buy?",
-            validate: function (value) {
-                if (isNaN(value) === false) {
-                    return true;
+        .prompt([
+            {
+                name: "id",
+                type: "input",
+                message: "What is the product id of the item that you want to buy?",
+                validate: function (value) {
+                    if (isNaN(value) === false) {
+                        return true;
+                    }
+                    return false;
                 }
-                return false;
+            },
+            {
+                name: "qty",
+                type: "input",
+                message: "How many items do you want to buy?",
+                validate: function (value) {
+                    if (isNaN(value) === false) {
+                        return true;
+                    }
+                    return false;
+                }
             }
+        ])
+        .then(function (answer) {
+            var query = "SELECT * FROM products";
+            connection.query(query, function (err, res) {
+                console.log("----------Checking supplies...----------");
+                checkSupplies();
+            });
         });
-}
+
+};
