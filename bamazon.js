@@ -1,36 +1,44 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
+var Table = require('cli-table');
+var dispTableView = require('./dispList.js');
+
 
 var connection = mysql.createConnection({
     host: "localhost",
-
-    // Your port; if not 3306
     port: 8890,
-
-    // Your username
     user: "root",
-
-    // Your password
     password: "root",
     database: "bamazon"
 });
 
 connection.connect(function (err, res) {
-    if (err) throw err;
-    console.log("---------------Connected as ID: " + connection.threadId + "---------------\n");
+    if (err) {
+        console.log("DB Connection Error ⛔\n");
+        throw err;
+    };
+    console.log("\n\n\n------------------Connected as ID: " + connection.threadId + "🔗🔗🔗------------------\n");
     displayProducts();
     //connection.end();
 });
 
+var displayProducts = function () {
+    var display = new dispTableView();
+    console.log("\n\n----------------All Available Items for SALE 🥚🧀🍞🍎 ----------------\n");
+    connection.query('SELECT * FROM products', function (err, res) {
+        display.dispList(res);
+        start();
+    });
+}
 
-function displayProducts() {
+/*function displayProducts() {
     console.log("----------All Available Items for SALE----------\n");
     connection.query("SELECT * FROM products", function (err, res) {
         if (err) throw err;
         res.forEach(row => console.log(`${row.item_id}: ${row.product_name}: ${row.department_name}: ${row.price}: ${row.stock_quantity}`));
         start();
     });
-};
+};*/
 
 
 function start() {
@@ -39,14 +47,14 @@ function start() {
             name: "buyOrnot",
             type: "list",
             message: "Would you like to buy an item?",
-            choices: ["Buy", "Exit"]
+            choices: ["Buy an Item", "Exit System"]
         })
         .then(function (answer) {
-            if (answer.buyOrnot === "Buy") {
+            if (answer.buyOrnot === "Buy an Item") {
                 buyItem();
             }
-            else if (answer.buyOrnot === "Exit") {
-                console.log("\n\n\n-------------------Exiting-------------------\n\n\n")
+            else if (answer.buyOrnot === "Exit System") {
+                console.log("\n\n\n--------------------Goodbye ⏎⏎⏎--------------------\n\n\n")
                 connection.end();
             }
         });
@@ -85,7 +93,7 @@ function buyItem() {
             `;
             connection.query(query, { item_id: answer.id }, function (err, res) {
                 if (err) throw err;
-                res.forEach(row => console.log(`\n\nYour order is ${row.product_name} for ${answer.qty} quantity/ies\n`));
+                res.forEach(row => console.log(`\n\n*****Your order is ${row.product_name} for ${answer.qty} quantity/ies*****\n`));
                 if (res[0].stock_quantity > answer.qty) {
                     var itemQuantity = res[0].stock_quantity - answer.qty;
                     connection.query("UPDATE products SET ? WHERE ?", [
@@ -97,7 +105,7 @@ function buyItem() {
                         function (err, res) {
                         });
                     var cost = res[0].price * answer.qty;
-                    console.log('\nOrder is successful! Total cost is $' + cost.toFixed(2) + '\n\n\n--------------------Thank you!--------------------\n\n\n');
+                    console.log('\n  👜   Order is successful! Total cost is $' + cost.toFixed(2) + '\n\n\n--------------------Thank you 🙂  -------------------\n\n\n');
                     start();
                 } else {
                     console.log("Sorry. Insufficient Supply! Pls. try again with a lower quantity order or a different product.)");
