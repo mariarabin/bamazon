@@ -48,6 +48,7 @@ function start() {
                 connection.end();
             }
         });
+
 }
 
 
@@ -84,7 +85,7 @@ function buyItem() {
             connection.query(query, { item_id: answer.id }, function (err, res) {
                 if (err) throw err;
                 res.forEach(row => console.log(`\n\n*****Your order is ${row.product_name} for ${answer.qty} quantity/ies*****\n`));
-                if (res[0].stock_quantity > answer.qty) {
+                if (res[0].stock_quantity >= answer.qty) {
                     var itemQuantity = res[0].stock_quantity - answer.qty;
                     connection.query("UPDATE products SET ? WHERE ?", [
                         {
@@ -95,11 +96,15 @@ function buyItem() {
                         function (err, res) {
                         });
                     var cost = res[0].price * answer.qty;
-                    console.log('\n  👜   Order is successful! Total cost is $' + cost.toFixed(2) + '\n\n\n--------------------Thank you 🙂  -------------------\n\n\n');
+                    console.log('\n  👜   Order is successful! Total cost is $' + cost.toFixed(2) + '\n\n\n Thank you for your order. You may select \'Buy an Item\' to buy again or \'Exit System\' from below options 🙂 . \n\n\n');
+                    displayProducts();
+                } else if (res[0].stock_quantity === 0) {
+                    console.log("Sorry. No Supply! Pls. try again with a different product.)");
                     start();
-                } else {
-                    console.log("Sorry. Insufficient Supply! Pls. try again with a lower quantity order or a different product.)");
-                    connection.end();
+                }
+                else {
+                    console.log("Sorry. Insufficient Supply! Pls. try again with a lower quantity order.)");
+                    displayProducts();
                 };
             });
         });
