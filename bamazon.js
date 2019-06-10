@@ -31,16 +31,6 @@ var displayProducts = function () {
     });
 }
 
-/*function displayProducts() {
-    console.log("----------All Available Items for SALE----------\n");
-    connection.query("SELECT * FROM products", function (err, res) {
-        if (err) throw err;
-        res.forEach(row => console.log(`${row.item_id}: ${row.product_name}: ${row.department_name}: ${row.price}: ${row.stock_quantity}`));
-        start();
-    });
-};*/
-
-
 function start() {
     inquirer
         .prompt({
