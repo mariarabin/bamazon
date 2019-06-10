@@ -70,7 +70,7 @@ Make sure you save and require the MySQL and Inquirer npm packages in your homew
 
    * If not, the app should log a phrase like `Insufficient quantity!`, and then prevent the order from going through.
    
-   ![Example](/images/7b.png)
+
    
    
    ![Example](/images/7c.png)
@@ -82,5 +82,7 @@ Make sure you save and require the MySQL and Inquirer npm packages in your homew
    * Once the update goes through, show the customer the total cost of their purchase.
 
    ![Example](/images/8a.png)
+   
+   ![Example](/images/7b.png)
 
    ![Example](/images/8b.png)
